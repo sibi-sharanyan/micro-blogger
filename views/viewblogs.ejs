@@ -1,0 +1,41 @@
+<% include partials/header %>
+
+
+
+
+
+<div class="container">
+
+
+  <% for(var i = 0 ; i < posts.length ; i++)  { %> 
+
+    <div class="jumbotron pl-4">
+     
+          <div id = "picm" class = "mb-5 mr-5">
+              <p class = "float-right "><img  src="img/<%= posts[i].img %>" alt="" style="width:200px;height:200px;"></p> 
+           </div>
+      
+        <h1 id = "pretitle"> <%= posts[i].title %>  </h1>
+        
+        <strong  id = "str">Category:</strong> <%= posts[i].catg %> <p id="precat">  </p>
+
+        <br> <br>
+        
+        <p id = "pretext">  <%= posts[i].text %>     </p>
+          <div class = "float-right"> <button type="button" class="btn btn-primary mx-5"><i class="fas fa-heart"></i> </button>   <button type="button" class="mx-5 btn btn-danger"> <i class="fas fa-heart-broken"></i></button>   <button type="button" class="mx-5 btn btn-success"> <i class="fas fa-comment-dots"></i></button>   </div> 
+      </div>
+
+      <% } %>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<% include partials/header %>

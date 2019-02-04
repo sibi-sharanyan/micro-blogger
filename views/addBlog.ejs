@@ -1,0 +1,68 @@
+<% include partials/header %>
+
+
+<div class="container">
+  <div id = "model">
+
+
+
+
+  </div>
+  <h2>Add a new Blog!</h2>
+
+  <form action="/addBlog" method="POST"   enctype="multipart/form-data" >
+    <div class="form-group">
+        <label for="Blog Title"><strong>Blog Title:</strong></label>
+        <input type="text" id="title" name = "title" class = "form-control"  >
+        <label for="Blog text"><strong>Blog Text:</strong></label>
+        <textarea id = "text" class="form-control" rows="5" name = "blogText"></textarea>
+        <br>
+        <strong>Add image:</strong>
+        <input type="file" name="recfile" >
+        <br> <br>
+        <label for="Blog Category"><strong>Blog Category:</strong></label>
+        <input type="text" name = "Category" class = "form-control"  id = "category" >
+
+        <button type="button" class="btn btn-primary mt-3" id = "preview" >Preview Blog</button>
+
+        <button type="submit" class="btn btn-secondary mt-3 float-right" id = "preview" >Add Blog</button>
+    </div>
+  </form>
+
+      
+
+
+</div>
+
+
+<script
+src="https://code.jquery.com/jquery-3.3.1.min.js"
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+crossorigin="anonymous"></script>
+
+
+
+<script>   
+
+
+
+$(() => {
+
+
+  $('#preview').click(function(){
+    var title = $('#title').val();
+    var text = $('#text').val();
+    var catg = $('#category').val(); 
+    // console.log(catg);
+
+    $('#model').html(' <div class="jumbotron">   <h1 id = "pretitle"> '  + title + '</h1>' +   '<strong  id = "str">Category:</strong> <p id="precat">' + catg + '</p> <p class="float-right"> <img src="#" id = "blah" alt="" style="width:200px;height:200px;"></p> <br> <br> <p id = "pretext">  '   + text + ' </p> </div>'  + '          <div class = "float-right"> <button type="button" class="btn btn-primary mx-5"><i class="fas fa-heart"></i> </button>   <button type="button" class="mx-5 btn btn-danger"> <i class="fas fa-heart-broken"></i></button>   <button type="button" class="mx-5 btn btn-success"> <i class="fas fa-comment-dots"></i></button>   </div>');
+});
+  })
+
+
+
+</script>
+
+
+
+<% include partials/header %>
