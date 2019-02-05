@@ -1,0 +1,142 @@
+<% include partials/header %>
+
+
+<div class="container">
+
+  <div class="jumbotron">
+
+    <div class="jumbotron ">
+       <div id = "picm" class = "mb-5 mr-5">
+           <p class = "float-right "><img  src="img/<%= post.img %>" alt="" style="width:200px;height:200px;"></p> 
+        </div>
+   
+     <h1 id = "pretitle"> <%= post.title %>  </h1>
+     
+     <strong  id = "str">Category:</strong> <%= post.catg %> <p id="precat">  </p>
+  
+     <br> <br>
+     
+     <p id = "pretext">  <%= post.text %>     </p>
+       <div class = "float-right"> <button dbid = "<%= post._id %>" type="button" class="btn btn-primary        "><i class="fas fa-heart"></i> </button> 
+             <span id="<%= post._id + 'li' %>"> <%= post.like %> </span>
+            <button  dbid = "<%= post._id %>" type="button" class=" btn btn-danger">     <i class="fas fa-heart-broken"></i></button>  
+  
+            <span id="<%= post._id + 'dl' %>"> <%= post.dislike %> </span>
+  
+  
+             <button dbid = "<%= post._id %>" type="button" class=" btn btn-success"> <i class="fas fa-comment-dots"></i></button>  
+  
+             <span id="<%= post._id + 'co' %>" class = "mr-5"> <%= post.comment.length %> </span>
+              <p class="float-left mr-2"><strong>Date Created:</strong><%= post.date %></p>
+           </div> 
+   </div>
+  </div>
+   <h3>Comments:</h3>
+   <ul class="list-group comments">
+   <% for(var i = 0 ; i < post.comment.length ; i++) { %>
+    <li class="list-group-item" >   <%= post.comment[i] %>   </li>
+  
+    <% } %>
+  
+   </ul>
+  
+   <h3>Liked Users:</h3>
+   <ul class="list-group">
+   <% for(var i = 0 ; i < post.likedusers.length ; i++) { %>
+    <li class="list-group-item" >  <%=  post.likedusers[i]  %> </li>
+    <% } %>
+  
+   </ul>
+  
+   <h3>DisLiked Users:</h3>
+   <ul class="list-group">
+   <% for(var i = 0 ; i < post.dislikedusers.length ; i++) { %>
+    <li class="list-group-item" >  <%=  post.dislikedusers[i] %>  </li>
+    <% } %>
+  
+   </ul>
+  
+  
+  
+   <h3> Add comment </h3>
+   <textarea id = "text" class="form-control" rows="5" name = "blogText"></textarea>
+   <button type="button" class="btn btn-primary mt-3" id = "addcom" dbid = "<%= post._id %>"   >Add Comment</button>
+  
+  
+  
+  
+  
+
+
+
+</div>
+
+
+
+
+<script
+src="https://code.jquery.com/jquery-3.3.1.min.js"
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+crossorigin="anonymous"></script>
+
+<script>
+
+$('#addcom').click(function() {
+  var comm = $('#text').val();
+  var id = $(this).attr('dbid');
+  $.ajax({url: '/postcomment/' +  id + '/' + comm  , type: 'GET' , dataType: 'json'    , success: function(data){
+    $('.comments').append('<li class="list-group-item">' + comm +  '</li>' );
+    $('#' + data._id + 'li').text(data.like);
+      $('#' + data._id + 'dl' ).text(data.dislike);
+       $('#' + data._id + 'co').text(data.comment.length);
+  }  })
+})
+
+
+$('.btn-primary').click(function() {
+  if($(this).hasClass('clicked'))
+  {
+    $(this).removeClass('clicked');
+    $.ajax({url : '/opr/dec/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+        console.log('#' + data._id + 'li');
+          $('#' + data._id + 'li').text(data.like);
+          $('#' + data._id + 'dl' ).text(data.dislike);
+          $('#' + data._id + 'co').text(data.comment.length); 
+    }  } );
+    return;
+  }
+    $(this).addClass('clicked');
+    $.ajax({url : '/opr/inc/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+      $('#' + data._id + 'li').text(data.like);
+      $('#' + data._id + 'dl' ).text(data.dislike);
+       $('#' + data._id + 'co').text(data.comment.length); 
+     }  } );
+})
+
+
+$('.btn-danger').click(function() {
+  if($(this).hasClass('clicked'))
+  {
+    $(this).removeClass('clicked');
+    $.ajax({url : '/dis/dec/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+          $('#' + data._id + 'li').text(data.like);
+          $('#' + data._id + 'dl' ).text(data.dislike);
+          $('#' + data._id + 'co').text(data.comment.length); 
+    }  } );
+    return;
+  }
+    $(this).addClass('clicked');
+    $.ajax({url : '/dis/inc/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+      $('#' + data._id + 'li').text(data.like);
+      $('#' + data._id + 'dl' ).text(data.dislike);
+       $('#' + data._id + 'co').text(data.comment.length); 
+     }  } );
+})
+
+
+
+
+
+
+
+</script>

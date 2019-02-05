@@ -31,10 +31,56 @@
 	display: inline;
 }
 
+
+.clicked  {
+	border: 5px solid black;
+}
 </style>
 
 
 
 <body>
 	
+	<div class="container"> 
+		<nav class="navbar  navbar-expand-lg navbar-dark bg-primary ">
+			<a class="navbar-brand" href="/">Micro Blogger</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			  <span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarText">
+			  <ul class="navbar-nav mr-auto">
+
+				<li class="nav-item">
+				  <a class="nav-link" href="/viewblogs">View Blogs</a>
+				</li>
+	
+					<% if(!user) { %>
+						<li class="nav-item">
+							<a class="nav-link" href="/login">Login</a>
+						  </li>
+						  <li class="nav-item">
+							<a class="nav-link" href="/register">Register</a>
+						  </li>
+						<%	 } %>
+
+						<% if(user) { %>
+				
+							<li class="nav-item">
+								<a class="nav-link" href="/logout">Logout</a>
+							  </li>
+						  <% } %>
+
+			  </ul>
+
+
+			  <% if(user) { %>
+				
+				<span class="navbar-text" id="user">
+					Logged in as <strong> <%= user.username %> </strong>
+				  </span>
+			  <% } %>
+
+			</div>
+		  </nav>
+	</div>
 

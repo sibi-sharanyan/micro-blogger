@@ -4,13 +4,18 @@
 
 
 
+
 <div class="container">
 
 
-  <% for(var i = 0 ; i < posts.length ; i++)  { %> 
-
-    <div class="jumbotron pl-4">
-     
+  <% for(var i = 0 ; i < posts.length ; i++)  { var admin = false , liked = false , disliked = false %> 
+    <% if(posts[i].likedusers.includes(user))   liked = true %> 
+    <% if(posts[i].dislikedusers.includes(user))   disliked = true %>
+    <% if(user.username == 'admin') admin = true %>
+    <div class="jumbotron ">
+         <% if(admin) { %>
+             <a href="/addblog"> EDIT </a>
+        <% } %> 
           <div id = "picm" class = "mb-5 mr-5">
               <p class = "float-right "><img  src="img/<%= posts[i].img %>" alt="" style="width:200px;height:200px;"></p> 
            </div>
@@ -22,7 +27,18 @@
         <br> <br>
         
         <p id = "pretext">  <%= posts[i].text %>     </p>
-          <div class = "float-right"> <button type="button" class="btn btn-primary mx-5"><i class="fas fa-heart"></i> </button>   <button type="button" class="mx-5 btn btn-danger"> <i class="fas fa-heart-broken"></i></button>   <button type="button" class="mx-5 btn btn-success"> <i class="fas fa-comment-dots"></i></button>   </div> 
+          <div class = "float-right"> <button dbid = "<%= posts[i]._id %>" type="button" class="btn btn-primary        "><i class="fas fa-heart"></i> </button> 
+                <span id="<%= posts[i]._id + 'li' %>"> <%= posts[i].like %> </span>
+               <button  dbid = "<%= posts[i]._id %>" type="button" class=" btn btn-danger">     <i class="fas fa-heart-broken"></i></button>  
+
+               <span id="<%= posts[i]._id + 'dl' %>"> <%= posts[i].dislike %> </span>
+
+
+                <button dbid = "<%= posts[i]._id %>" type="button" class=" btn btn-success"> <i class="fas fa-comment-dots"></i></button>  
+
+                <span id="<%= posts[i]._id + 'co' %>" class = "mr-5"> <%= posts[i].comment.length %> </span>
+                 <p class="float-left mr-2"><strong>Date Created:</strong><%= posts[i].date %></p>
+              </div> 
       </div>
 
       <% } %>
@@ -31,11 +47,74 @@
 
 
 
+<script
+src="https://code.jquery.com/jquery-3.3.1.min.js"
+integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+crossorigin="anonymous"></script>
+
+
+<script>
 
 
 
 
 
 
+$('.btn-primary').click(function() {
+  if($(this).hasClass('clicked'))
+  {
+    $(this).removeClass('clicked');
+    $.ajax({url : '/opr/dec/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+        console.log('#' + data._id + 'li');
+          $('#' + data._id + 'li').text(data.like);
+          $('#' + data._id + 'dl' ).text(data.dislike);
+          $('#' + data._id + 'co').text(data.comment.length); 
+    }  } );
+    return;
+  }
+    $(this).addClass('clicked');
+    $.ajax({url : '/opr/inc/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+      $('#' + data._id + 'li').text(data.like);
+      $('#' + data._id + 'dl' ).text(data.dislike);
+       $('#' + data._id + 'co').text(data.comment.length); 
+     }  } );
+})
 
-<% include partials/header %>
+
+$('.btn-danger').click(function() {
+  if($(this).hasClass('clicked'))
+  {
+    $(this).removeClass('clicked');
+    $.ajax({url : '/dis/dec/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+          $('#' + data._id + 'li').text(data.like);
+          $('#' + data._id + 'dl' ).text(data.dislike);
+          $('#' + data._id + 'co').text(data.comment.length); 
+    }  } );
+    return;
+  }
+    $(this).addClass('clicked');
+    $.ajax({url : '/dis/inc/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+      $('#' + data._id + 'li').text(data.like);
+      $('#' + data._id + 'dl' ).text(data.dislike);
+       $('#' + data._id + 'co').text(data.comment.length); 
+     }  } );
+})
+
+
+
+
+$('.btn-success').click(function(){
+  window.location = '/addcomment/' + $(this).attr('dbid');
+})
+
+
+
+
+</script>
+
+
+
+
+
+
+<!-- <% include partials/footer %> -->

@@ -12,6 +12,22 @@ var express = require("express"),
   upload = multer({ dest: 'upload/' }),
   type = upload.single('recfile');
 
+
+  function removeA(arr) {
+    var what, a = arguments, L = a.length, ax;
+    while (L > 1 && arr.length) {
+        what = a[--L];
+        while ((ax= arr.indexOf(what)) !== -1) {
+            arr.splice(ax, 1);
+        }
+    }
+    return arr;
+}
+
+
+
+
+
   mongoose.connect(
     process.env.DATABASEURL || "mongodb://localhost:27017/Blogger",
     { useNewUrlParser: true }
@@ -68,8 +84,67 @@ app.get("/", function(req, res) {
 
 //The homepage for the user
 app.get("/home", function(req, res) {  
-  res.render("home" , {user1 : req.user});  
+  res.render("home" , {user : req.user});  
 });
+
+
+//Ajax to incr or decr the like count
+app.get("/opr/:task/:id" , function(req ,res)  {
+  // res.send('hii');
+  post.findById(req.params.id , (err , data) => {
+    if(err)
+    {
+      console.log(err);
+    }
+    else
+    {
+      console.log(data);
+      if(req.params.task == 'dec')
+      {
+        data.like--;
+        data.likedusers.push(req.user.username);
+        data.save();
+      }
+      else
+      {
+        data.like++;
+        removeA(data.likedusers, req.user.username);
+        data.save();
+      }
+      res.json(data);
+    }
+  } ) 
+} )
+
+//Ajax to incr or decr the dislike count
+app.get("/dis/:task/:id" , function(req ,res)  {
+  // res.send('hii');
+  post.findById(req.params.id , (err , data) => {
+    if(err)
+    {
+      console.log(err);
+    }
+    else
+    {
+      console.log(data);
+      if(req.params.task == 'dec')
+      {
+        data.dislike--;
+        data.dislikedusers.push(req.user.username);
+        data.save();
+      }
+      else
+      {
+        data.dislike++;
+        removeA(data.dislikedusers, req.user.username);
+        data.save();
+      }
+      res.json(data);
+    }
+  } ) 
+} )
+
+
 
 //Display form to register user
 app.get("/register", function(req, res) {
@@ -99,10 +174,40 @@ app.post("/register", function(req, res) {
   );
 });
 
+//to display and add comments to a blog
+app.get("/addcomment/:id" , function(req , res) {
+  post.findById(req.params.id , function(err , data) {
+    if(err)
+    {
+      console.log(err);
+    }
+    else
+    {
+          res.render("blog" , {post: data , user: req.user});
+    }
+  }
+  )})
+
+//to add comment with post
+app.get("/postcomment/:id/:comm" , function(req , res) {
+  post.findById(req.params.id , function(err , data) {
+    if(err){
+      console.log(err);
+    }
+    else
+    {
+      data.comment.push(req.params.comm);
+      data.save();
+      res.json(data);
+    }
+  })
+})  
+
+
 // Display login form to the user
 app.get("/login", function(req, res) {
 
-  res.render("login", { userexist: false });
+  res.render("login", { userexist: false , user : req.user });
 
 });
 
@@ -118,8 +223,8 @@ app.post(
 
 
 //Page for admin to post blog to the database with an interactive view option
-app.get("/addblog" , function(req , res){
-  res.render("addBlog");
+app.get("/addblog" , isAdmin ,function(req , res){
+  res.render("addBlog" , {user : req.user});
 } )
 
 //Post the blog to the database
@@ -141,6 +246,8 @@ app.post("/addblog" , type ,  function(req , res){
       else
       {
         console.log(msg);
+        // likedusers.push(req.user);
+        // dislikedusers.push(req.user);
         res.redirect("/addblog");
       }
     })
@@ -153,7 +260,7 @@ app.post("/addblog" , type ,  function(req , res){
 }  )
 
 //route to view all blogs in the database
-app.get("/viewblogs" ,  function(req ,res) {
+app.get("/viewblogs" , isLoggedIn ,function(req ,res) {
 
   post.find({} , function(err , posts)  {
     if(err) 
@@ -162,7 +269,7 @@ app.get("/viewblogs" ,  function(req ,res) {
     }
     else
     {
-      res.render('viewblogs' , {posts: posts});
+      res.render('viewblogs' , {posts: posts , user: req.user});
     }
   }  )
 
