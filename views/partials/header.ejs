@@ -64,7 +64,12 @@
 						<%	 } %>
 
 						<% if(user) { %>
-				
+							<% if(user.username == 'admin') { %>
+							<li class="nav-item">
+								<a class="nav-link" href="/addblog">Add Blog</a>
+							  </li>
+								<% } %>
+								
 							<li class="nav-item">
 								<a class="nav-link" href="/logout">Logout</a>
 							  </li>

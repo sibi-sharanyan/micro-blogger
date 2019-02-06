@@ -89,7 +89,7 @@ app.get("/home", function(req, res) {
 
 
 //Ajax to incr or decr the like count
-app.get("/opr/:task/:id" , function(req ,res)  {
+app.get("/opr/:task/:id/:uname" , function(req ,res)  {
   // res.send('hii');
   post.findById(req.params.id , (err , data) => {
     if(err)
@@ -102,13 +102,17 @@ app.get("/opr/:task/:id" , function(req ,res)  {
       if(req.params.task == 'dec')
       {
         data.like--;
-        data.likedusers.push(req.user.username);
+        console.log(req.params.uname);
+        removeA(data.likedusers, req.params.uname);
+        console.log(data.likedusers)
         data.save();
       }
       else
       {
         data.like++;
-        removeA(data.likedusers, req.user.username);
+        console.log(data.likedusers);
+        data.likedusers.push(req.params.uname);
+        
         data.save();
       }
       res.json(data);
@@ -117,7 +121,7 @@ app.get("/opr/:task/:id" , function(req ,res)  {
 } )
 
 //Ajax to incr or decr the dislike count
-app.get("/dis/:task/:id" , function(req ,res)  {
+app.get("/dis/:task/:id/:uname" , function(req ,res)  {
   // res.send('hii');
   post.findById(req.params.id , (err , data) => {
     if(err)
@@ -130,13 +134,14 @@ app.get("/dis/:task/:id" , function(req ,res)  {
       if(req.params.task == 'dec')
       {
         data.dislike--;
-        data.dislikedusers.push(req.user.username);
+        removeA(data.dislikedusers, req.params.uname);
+        
         data.save();
       }
       else
       {
         data.dislike++;
-        removeA(data.dislikedusers, req.user.username);
+        data.dislikedusers.push(req.params.uname);
         data.save();
       }
       res.json(data);
@@ -248,7 +253,7 @@ app.post("/addblog" , type ,  function(req , res){
         console.log(msg);
         // likedusers.push(req.user);
         // dislikedusers.push(req.user);
-        res.redirect("/addblog");
+        res.redirect("/viewblogs");
       }
     })
     

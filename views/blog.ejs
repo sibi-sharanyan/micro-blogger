@@ -7,7 +7,7 @@
 
     <div class="jumbotron ">
        <div id = "picm" class = "mb-5 mr-5">
-           <p class = "float-right "><img  src="img/<%= post.img %>" alt="" style="width:200px;height:200px;"></p> 
+           <p class = "float-right "><img  src="/img/<%= post.img %>" alt="" style="width:200px;height:200px;"></p> 
         </div>
    
      <h1 id = "pretitle"> <%= post.title %>  </h1>
@@ -82,7 +82,8 @@ crossorigin="anonymous"></script>
 <script>
 
 $('#addcom').click(function() {
-  var comm = $('#text').val();
+  var user = '<%= user.username %>' ; 
+  var comm =   user + ' - '  +   $('#text').val()  ;
   var id = $(this).attr('dbid');
   $.ajax({url: '/postcomment/' +  id + '/' + comm  , type: 'GET' , dataType: 'json'    , success: function(data){
     $('.comments').append('<li class="list-group-item">' + comm +  '</li>' );

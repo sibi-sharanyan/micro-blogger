@@ -1,5 +1,6 @@
 <% include partials/header %>
 
+<% var admin , liked %>
 
 
 
@@ -8,11 +9,11 @@
 <div class="container">
 
 
-  <% for(var i = 0 ; i < posts.length ; i++)  { var admin = false , liked = false , disliked = false %> 
-    <% if(posts[i].likedusers.includes(user))   liked = true %> 
-    <% if(posts[i].dislikedusers.includes(user))   disliked = true %>
+  <% for(var i = 0 ; i < posts.length ; i++)  {  admin = false , liked = false , disliked = false     %> 
+    <% if(posts[i].likedusers.includes(user.username))   liked = true %> 
+    <% if(posts[i].dislikedusers.includes(user.username))   disliked = true %>
     <% if(user.username == 'admin') admin = true %>
-    <div class="jumbotron ">
+    <div class="jumbotron " id = "<%= user.username %>">
          <% if(admin) { %>
              <a href="/addblog"> EDIT </a>
         <% } %> 
@@ -27,9 +28,9 @@
         <br> <br>
         
         <p id = "pretext">  <%= posts[i].text %>     </p>
-          <div class = "float-right"> <button dbid = "<%= posts[i]._id %>" type="button" class="btn btn-primary        "><i class="fas fa-heart"></i> </button> 
+          <div class = "float-right"> <button dbid = "<%= posts[i]._id %>" type="button" class="btn btn-primary   <%= liked ? 'clicked' : 'no' %>       "><i class="fas fa-heart"></i> </button> 
                 <span id="<%= posts[i]._id + 'li' %>"> <%= posts[i].like %> </span>
-               <button  dbid = "<%= posts[i]._id %>" type="button" class=" btn btn-danger">     <i class="fas fa-heart-broken"></i></button>  
+               <button  dbid = "<%= posts[i]._id %>" type="button" class=" btn btn-danger  <%= disliked ? 'clicked' : 'no' %>">     <i class="fas fa-heart-broken"></i></button>  
 
                <span id="<%= posts[i]._id + 'dl' %>"> <%= posts[i].dislike %> </span>
 
@@ -54,7 +55,11 @@ crossorigin="anonymous"></script>
 
 
 <script>
+  
 
+
+
+  var uname = $('.jumbotron').attr('id');
 
 
 
@@ -64,7 +69,7 @@ $('.btn-primary').click(function() {
   if($(this).hasClass('clicked'))
   {
     $(this).removeClass('clicked');
-    $.ajax({url : '/opr/dec/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+    $.ajax({url : '/opr/dec/' + $(this).attr('dbid') + '/' + uname , type: 'GET' , dataType: 'json' , success: function(data) {
         console.log('#' + data._id + 'li');
           $('#' + data._id + 'li').text(data.like);
           $('#' + data._id + 'dl' ).text(data.dislike);
@@ -73,7 +78,7 @@ $('.btn-primary').click(function() {
     return;
   }
     $(this).addClass('clicked');
-    $.ajax({url : '/opr/inc/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+    $.ajax({url : '/opr/inc/' + $(this).attr('dbid') + '/' + uname , type: 'GET' , dataType: 'json' , success: function(data) {
       $('#' + data._id + 'li').text(data.like);
       $('#' + data._id + 'dl' ).text(data.dislike);
        $('#' + data._id + 'co').text(data.comment.length); 
@@ -85,7 +90,7 @@ $('.btn-danger').click(function() {
   if($(this).hasClass('clicked'))
   {
     $(this).removeClass('clicked');
-    $.ajax({url : '/dis/dec/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+    $.ajax({url : '/dis/dec/' + $(this).attr('dbid') + '/' + uname, type: 'GET' , dataType: 'json' , success: function(data) {
           $('#' + data._id + 'li').text(data.like);
           $('#' + data._id + 'dl' ).text(data.dislike);
           $('#' + data._id + 'co').text(data.comment.length); 
@@ -93,7 +98,7 @@ $('.btn-danger').click(function() {
     return;
   }
     $(this).addClass('clicked');
-    $.ajax({url : '/dis/inc/' + $(this).attr('dbid') , type: 'GET' , dataType: 'json' , success: function(data) {
+    $.ajax({url : '/dis/inc/' + $(this).attr('dbid') + '/' + uname , type: 'GET' , dataType: 'json' , success: function(data) {
       $('#' + data._id + 'li').text(data.like);
       $('#' + data._id + 'dl' ).text(data.dislike);
        $('#' + data._id + 'co').text(data.comment.length); 
@@ -115,6 +120,6 @@ $('.btn-success').click(function(){
 
 
 
-
+     
 
 <!-- <% include partials/footer %> -->
